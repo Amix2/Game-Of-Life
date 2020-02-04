@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Cell.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />
+    <Compile Include="Assets\Scripts\Utils.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>F:/Unity/Projects/Game Of Life/Project/Game Of Life/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

@@ -11,9 +11,12 @@ public class Cell : MonoBehaviour
     private int2 myPosition;
     private Transform myTransform;
     private SpriteRenderer mySpriteRenderer { get; set; }
-    static private System.Random random = new System.Random();
-
+    private Color currentColor;
+    private Color nextColor = new Color();
     private float nextColorChangeTime;
+
+    private System.Random random;
+
     void Start()
     {
         myTransform = this.GetComponent<Transform>();
@@ -27,8 +30,10 @@ public class Cell : MonoBehaviour
 
         mySpriteRenderer = this.GetComponent<SpriteRenderer>();
         mySpriteRenderer.color = new Color { r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f };
-
+        currentColor = mySpriteRenderer.color;
         nextColorChangeTime = Time.time + UnityEngine.Random.Range(0.5f, 2.0f); ;
+
+        random = new System.Random(Utils.RandomInt(0, 100000));
     }
 
     /// <summary>
@@ -39,40 +44,64 @@ public class Cell : MonoBehaviour
     //{
     //    mySpriteRenderer.color = nextColor;
     //}
-///////////
-    public void mUpdate()
+    ///////////
+    public void SequentialUpdate()
     {
         if (Time.time > nextColorChangeTime && isOnEdge)
         {
-            nextColorChangeTime = Time.time + UnityEngine.Random.Range(0.5f, 2.0f) + 6;
-            float red = UnityEngine.Random.Range(0.0f, 1.0f);
-            float blue = UnityEngine.Random.Range(0.0f, 1.0f);
-            float green = UnityEngine.Random.Range(0.0f, 1.0f);
+            nextColorChangeTime = Time.time + Utils.RandomFloat(random, 0.5f, 2.0f);
+            float red = Utils.RandomFloat(0.0f, 1.0f);
+            float blue = Utils.RandomFloat(0.0f, 1.0f);
+            float green = Utils.RandomFloat(0.0f, 1.0f);
             float sum = red + blue + green;
             mySpriteRenderer.color = new Color { r = red / sum, g = green / sum, b = blue / sum, a = 1.0f };
         }
-        else if(Time.time > nextColorChangeTime && !isOnEdge)
+        else if (Time.time > nextColorChangeTime && !isOnEdge)
         {
-            nextColorChangeTime = Time.time - UnityEngine.Random.Range(0.5f, 1.0f);
+            nextColorChangeTime = Time.time - Utils.RandomFloat(0.5f, 1.0f);
             Color color = new Color();
-            mySpriteRenderer.color = color;
+
             float count = 0.0f;
-            foreach(Cell otherCell in this.neighbourList)
+            foreach (Cell otherCell in this.neighbourList)
             {
                 color += otherCell.mySpriteRenderer.color;
                 count += otherCell.mySpriteRenderer.color.a;
             }
-            if(count > 0.0f)
-                mySpriteRenderer.color = color / count;//
+            if (count > 0.0f)
+                mySpriteRenderer.color = color / count;
         }
     }
-    /////////////////////////////
-    //public void PararelUpdate(float time)
-    //{
-    //    if (time > nextColorChangeTime && !isOnEdge)
-    //    {
-    //        nextColorChangeTime = time + (float)random.NextDouble() * 2 + 0.5f;
-    //        nextColor = new Color { r = (float)random.NextDouble(), g = (float)random.NextDouble(), b = (float)random.NextDouble(), a = 1.0f };
-    //    }
-    //}
+
+    public void PararelUpdatePrep(float time)
+    {
+        if (time > nextColorChangeTime && isOnEdge)
+        {
+            nextColorChangeTime = time + Utils.RandomFloat(random, 0.5f, 2.0f);
+            float red = Utils.RandomFloat(random, 0.1f, 1.0f);
+            float blue = Utils.RandomFloat(random, 0.1f, 1.0f);
+            float green = Utils.RandomFloat(random, 0.1f, 1.0f);
+            float sum = red + blue + green;
+            nextColor = new Color { r = red / sum, g = green / sum, b = blue / sum, a = 1.0f };
+        }
+        else if (time > nextColorChangeTime && !isOnEdge)
+        {
+            nextColorChangeTime = time - Utils.RandomFloat(random, 0.5f, 1.0f);
+            Color color = new Color();
+
+            float count = 0.0f;
+            foreach (Cell otherCell in this.neighbourList)
+            {
+                color += otherCell.currentColor;
+                count += otherCell.currentColor.a;
+            }
+            if (count > 0.0f)
+                nextColor = color / count;
+         }
+    }
+
+    public void PararelUpdateFinal()
+    {
+        mySpriteRenderer.color = nextColor;
+        currentColor = nextColor;
+    }
 }

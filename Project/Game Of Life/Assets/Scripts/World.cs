@@ -21,6 +21,7 @@ public class World : MonoBehaviour
         cameraTransform.position = new Vector3(SceneX / 2.0f, SceneY / 2.0f, mainCamera.GetComponent<Transform>().position.z);
 
         CreateAllCells();
+
     }
 
     private void CreateAllCells()
@@ -71,8 +72,30 @@ public class World : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //float time = Time.time;
-        //Parallel.ForEach<CellScript>(cellScriptArray, (cellScript) => cellScript.PararelUpdate(time));
-        foreach (Cell cellScript in cellScriptArray)  cellScript.mUpdate();
+        PararelUpdate();
+        //SequentialUpdate();
+    }
+
+    void SequentialUpdate()
+    {
+        foreach (Cell cellScript in cellScriptArray) cellScript.SequentialUpdate();
+    }
+
+    void PararelUpdate()
+    {
+        float time = Time.time;
+
+        Parallel.For(0, SceneY, y => 
+        //for(int y=0; y<SceneY; y++)
+        {
+            for(int x = SceneX-1; x>=0; x--)
+            {
+                cellScriptArray[x, y].PararelUpdatePrep(time);
+            }
+        }
+        );
+        //Thread.Sleep(100);
+
+        foreach (Cell cellScript in cellScriptArray) cellScript.PararelUpdateFinal();
     }
 }
