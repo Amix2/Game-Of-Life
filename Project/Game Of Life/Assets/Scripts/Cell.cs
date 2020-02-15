@@ -5,14 +5,19 @@ using System;
 
 public class Cell : MonoBehaviour
 {
-    public bool isOnEdge = false;
-    public Cell[] neighbourList = null;
+    //[HideInInspector]
+    public bool isOnEdge { get; set; } = false;
+    //[HideInInspector]
+    public Cell[] neighbourList { get; set; } = null;
+    //[HideInInspector]
+    public State m_state { get; set; }
+    private State m_nextState { get; set; }
+
 
     private int2 myPosition;
     private Transform myTransform;
     private SpriteRenderer mySpriteRenderer { get; set; }
-    private Color currentColor;
-    private Color nextColor = new Color();
+
     private float nextColorChangeTime;
 
     private System.Random random;
@@ -30,78 +35,74 @@ public class Cell : MonoBehaviour
 
         mySpriteRenderer = this.GetComponent<SpriteRenderer>();
         mySpriteRenderer.color = new Color { r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f };
-        currentColor = mySpriteRenderer.color;
-        nextColorChangeTime = Time.time + UnityEngine.Random.Range(0.5f, 2.0f); ;
+
+        nextColorChangeTime = Time.time + 1.0f;
 
         random = new System.Random(Utils.RandomInt(0, 100000));
     }
 
-    /// <summary>
-    /// ///////////////////////////
-    /// </summary>
-    // Update is called once per frame
-    //void Update()
-    //{
-    //    mySpriteRenderer.color = nextColor;
-    //}
-    ///////////
-    public void SequentialUpdate()
+    public void PararelUpdatePrep()
     {
-        if (Time.time > nextColorChangeTime && isOnEdge)
+        if (isOnEdge)
         {
-            nextColorChangeTime = Time.time + Utils.RandomFloat(random, 0.5f, 2.0f);
-            float red = Utils.RandomFloat(0.0f, 1.0f);
-            float blue = Utils.RandomFloat(0.0f, 1.0f);
-            float green = Utils.RandomFloat(0.0f, 1.0f);
-            float sum = red + blue + green;
-            mySpriteRenderer.color = new Color { r = red / sum, g = green / sum, b = blue / sum, a = 1.0f };
+            m_nextState = m_state;
         }
-        else if (Time.time > nextColorChangeTime && !isOnEdge)
+        else
         {
-            nextColorChangeTime = Time.time - Utils.RandomFloat(0.5f, 1.0f);
-            Color color = new Color();
 
-            float count = 0.0f;
+            int count = 0;
             foreach (Cell otherCell in this.neighbourList)
             {
-                color += otherCell.mySpriteRenderer.color;
-                count += otherCell.mySpriteRenderer.color.a;
+                if (otherCell.m_state == State.ALIVE)
+                {
+                    count++;
+                }
             }
-            if (count > 0.0f)
-                mySpriteRenderer.color = color / count;
+
+            m_nextState = World.gameOfLife.GetDecision(count, m_state);
         }
     }
 
-    public void PararelUpdatePrep(float time)
+    public void SequentialUpdateFinal()
     {
-        if (time > nextColorChangeTime && isOnEdge)
-        {
-            nextColorChangeTime = time + Utils.RandomFloat(random, 0.5f, 2.0f);
-            float red = Utils.RandomFloat(random, 0.1f, 1.0f);
-            float blue = Utils.RandomFloat(random, 0.1f, 1.0f);
-            float green = Utils.RandomFloat(random, 0.1f, 1.0f);
-            float sum = red + blue + green;
-            nextColor = new Color { r = red / sum, g = green / sum, b = blue / sum, a = 1.0f };
-        }
-        else if (time > nextColorChangeTime && !isOnEdge)
-        {
-            nextColorChangeTime = time - Utils.RandomFloat(random, 0.5f, 1.0f);
-            Color color = new Color();
-
-            float count = 0.0f;
-            foreach (Cell otherCell in this.neighbourList)
-            {
-                color += otherCell.currentColor;
-                count += otherCell.currentColor.a;
-            }
-            if (count > 0.0f)
-                nextColor = color / count;
-         }
+        m_state = m_nextState;
+        mySpriteRenderer.color = m_state.ToColor();
+       
     }
 
-    public void PararelUpdateFinal()
+    public void SetState(State state)
     {
-        mySpriteRenderer.color = nextColor;
-        currentColor = nextColor;
+        m_state = state;
+        mySpriteRenderer.color = m_state.ToColor();
     }
 }
+
+
+
+
+    //public void SequentialUpdate()
+    //{
+    //    if (Time.time > nextColorChangeTime && isOnEdge)
+    //    {
+    //        nextColorChangeTime = Time.time + Utils.RandomFloat(random, 0.5f, 2.0f);
+    //        float red = Utils.RandomFloat(0.0f, 1.0f);
+    //        float blue = Utils.RandomFloat(0.0f, 1.0f);
+    //        float green = Utils.RandomFloat(0.0f, 1.0f);
+    //        float sum = red + blue + green;
+    //        mySpriteRenderer.color = new Color { r = red / sum, g = green / sum, b = blue / sum, a = 1.0f };
+    //    }
+    //    else if (Time.time > nextColorChangeTime && !isOnEdge)
+    //    {
+    //        nextColorChangeTime = Time.time - Utils.RandomFloat(0.5f, 1.0f);
+    //        Color color = new Color();
+
+    //        float count = 0.0f;
+    //        foreach (Cell otherCell in this.neighbourList)
+    //        {
+    //            color += otherCell.mySpriteRenderer.color;
+    //            count += otherCell.mySpriteRenderer.color.a;
+    //        }
+    //        if (count > 0.0f)
+    //            mySpriteRenderer.color = color / count;
+    //    }
+    //}

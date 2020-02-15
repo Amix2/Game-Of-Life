@@ -1,0 +1,15 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+#define ARR(x, y) Result[x+y*WORLD_SIZE_X]
+
+int WORLD_SIZE_X;
+
+RWBuffer<float> Result;
+
+[numthreads(1,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+
+	ARR(id.x, 0) = 99.0099f + WORLD_SIZE_X;
+}

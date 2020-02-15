@@ -15,14 +15,14 @@ public class UserInput : MonoBehaviour
     private void ZoomIn()
     {
         //cameraTransform.position = new Vector3(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z-1);
-        mainCamera.orthographicSize *= 1.0f - zoomSpeed;
-        if (mainCamera.orthographicSize < 0.2f) mainCamera.orthographicSize = 0.2f;
+       // mainCamera.orthographicSize *= 1.0f - zoomSpeed;
+        //if (mainCamera.orthographicSize < 0.2f) mainCamera.orthographicSize = 0.2f;
     }
 
     private void ZoomOut()
     {
        // cameraTransform.position = new Vector3(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z + 1);
-        mainCamera.orthographicSize *= 1.0f + zoomSpeed;
+       // mainCamera.orthographicSize *= 1.0f + zoomSpeed;
     }
 
     private void checkMouseScroll()
