@@ -1,0 +1,46 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture2D<float4> inputTexture;
+RWTexture2D<float4> outputTexture;
+
+int u_unit;
+int u_sizeX, u_sizeY;
+
+
+
+[numthreads(16,16,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    if (id.x * id.y == 0 || id.x >= u_sizeX || id.y >= u_sizeY)
+        return;
+    
+    const int2 sectorPosition = id.xy * u_unit;
+    
+    float neiState = 
+          inputTexture[sectorPosition + int2(-u_unit , -u_unit)].x
+        + inputTexture[sectorPosition + int2(0       , -u_unit)].x
+        + inputTexture[sectorPosition + int2(u_unit  , -u_unit)].x
+    
+        + inputTexture[sectorPosition + int2(-u_unit , 0)].x
+        + inputTexture[sectorPosition + int2(u_unit  , 0)].x
+
+        + inputTexture[sectorPosition + int2(-u_unit , u_unit)].x
+        + inputTexture[sectorPosition + int2(0       , u_unit)].x
+        + inputTexture[sectorPosition + int2(u_unit  , u_unit)].x;
+    
+    float4 color = inputTexture[sectorPosition].x == 1.0f // if im ALIVE
+        ? (neiState == 2.0f || neiState == 3.0f ? // im ALIVE
+            float4(1.0f, 1.0f, 1.0f, 1.0f) : // make ALIVE
+            float4(0.0f, 0.0f, 0.0f, 1.0f)) // make DEAD
+        : (neiState == 3.0f ? // im DEAD
+            float4(1.0f, 1.0f, 1.0f, 1.0f) : // make ALIVE
+            float4(0.0f, 0.0f, 0.0f, 1.0f)); // make DEAD
+
+    outputTexture[sectorPosition + int2(0, 0)] = 
+    outputTexture[sectorPosition + int2(1, 0)] =
+    outputTexture[sectorPosition + int2(1, 1)] =
+    outputTexture[sectorPosition + int2(0, 1)] = color;
+}

@@ -64,17 +64,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CameraMovement.cs" />
-    <Compile Include="Assets\Scripts\Cell.cs" />
-    <Compile Include="Assets\Scripts\GameOfLifeRules.cs" />
-    <Compile Include="Assets\Scripts\GoLStructure.cs" />
-    <Compile Include="Assets\Scripts\GoLStructureButton.cs" />
-    <Compile Include="Assets\Scripts\GoLStructureFileReader.cs" />
-    <Compile Include="Assets\Scripts\GoLStructureList.cs" />
+    <Compile Include="Assets\Scripts\OLD\Cell.cs" />
+    <Compile Include="Assets\Scripts\OLD\GameOfLifeRules.cs" />
+    <Compile Include="Assets\Scripts\OLD\GoLStructure.cs" />
+    <Compile Include="Assets\Scripts\OLD\GoLStructureButton.cs" />
+    <Compile Include="Assets\Scripts\OLD\GoLStructureFileReader.cs" />
+    <Compile Include="Assets\Scripts\OLD\GoLStructureList.cs" />
+    <Compile Include="Assets\Scripts\OLD\Sector.cs" />
+    <Compile Include="Assets\Scripts\OLD\World.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />
     <Compile Include="Assets\Scripts\Utils.cs" />
-    <Compile Include="Assets\Scripts\World.cs" />
+    <Compile Include="Assets\Scripts\WorldSectors.cs" />
     <None Include="Assets\Config\GoLStructures.txt" />
-    <None Include="Assets\Scripts\GameOfLifeShader.compute" />
+    <None Include="Assets\Scripts\OLD\GameOfLifeShader.compute" />
+    <None Include="Assets\Scripts\SectorsCompute.compute" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>F:/Unity/Projects/Game Of Life/Project/Game Of Life/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

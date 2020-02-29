@@ -6,7 +6,7 @@ public class CameraMovement : MonoBehaviour
 {
     public Camera m_camera;
     public float m_zoomFactor = 0.3f;
-    public float m_panSpeed = 0.5f;
+    public float m_panSpeed = 1.5f;
 
     private Transform m_target;
     private Vector2 m_grabScreenVec;
